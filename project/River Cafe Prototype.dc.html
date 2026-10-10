@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<script src="./osa-data.js"></script>
+<style>body{margin:0;background:#1C1C1C;overflow:hidden}a{color:#E82E00}a:hover{color:#DA621E}</style>
+</helmet>
+<div style="position:fixed;inset:0;display:flex;flex-direction:column;background:#1C1C1C;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','SF Pro',system-ui,sans-serif;color:#F7F7F7;-webkit-font-smoothing:antialiased">
+  <div style="flex:none;height:56px;display:flex;align-items:center;gap:16px;padding:0 20px;border-bottom:1px solid #2B2B2B">
+    <div style="font-size:15px;font-weight:600;letter-spacing:-0.01em;white-space:nowrap">The River Café · Table booking prototype</div>
+    <div style="flex:1"></div>
+    <div style="display:flex;gap:4px;padding:4px;background:#101010;border-radius:12px">
+      <sc-for list="{{ modes }}" as="m" hint-placeholder-count="3">
+        <button onClick="{{ m.onClick }}" style="height:32px;padding:0 14px;border:none;border-radius:8px;background:{{ m.bg }};color:{{ m.fg }};font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap">{{ m.label }}</button>
+      </sc-for>
+    </div>
+    <button onClick="{{ reset }}" style="height:40px;padding:0 14px;border:1px solid #454545;border-radius:10px;background:transparent;color:#F7F7F7;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap" style-hover="background:#2B2B2B">Restart</button>
+  </div>
+  <div style="flex:1;min-height:0;display:flex;align-items:center;justify-content:center;position:relative">
+    <div style="position:relative;width:{{ fw }}px;height:{{ fh }}px">
+      <div style="position:absolute;left:0;top:0;width:{{ w }}px;height:{{ h }}px;transform:scale({{ scale }});transform-origin:0 0;border-radius:{{ radius }}px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5)">
+        <sc-if value="{{ showDesktop }}" hint-placeholder-val="{{ true }}"><dc-import name="OsaDesktop" scenario="fresh" hint-size="1440px,900px"></dc-import></sc-if>
+        <sc-if value="{{ showDark }}" hint-placeholder-val="{{ false }}"><dc-import name="OsaDesktopDark" scenario="fresh" hint-size="1440px,900px"></dc-import></sc-if>
+        <sc-if value="{{ showMobile }}" hint-placeholder-val="{{ false }}"><dc-import name="OsaMobile" scenario="fresh" hint-size="390px,844px"></dc-import></sc-if>
+      </div>
+    </div>
+  </div>
+  <div style="flex:none;height:40px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#A8A8A8;text-align:center;padding:0 16px">{{ help }}</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { mode: 'desktop', alive: true, vw: window.innerWidth, vh: window.innerHeight };
+  componentDidMount() { this._r = () => this.setState({ vw: window.innerWidth, vh: window.innerHeight }); window.addEventListener('resize', this._r); }
+  componentWillUnmount() { window.removeEventListener('resize', this._r); }
+  go(mode) { this.setState({ mode, alive: false }, () => setTimeout(() => this.setState({ alive: true }), 0)); }
+  renderVals() {
+    const s = this.state, mob = s.mode === 'mobile';
+    const w = mob ? 390 : 1440, h = mob ? 844 : 900;
+    const scale = Math.min(1, (s.vw - 40) / w, (s.vh - 56 - 40 - 24) / h);
+    return {
+      w, h, scale, fw: w * scale, fh: h * scale, radius: mob ? 44 : 14,
+      showDesktop: s.alive && s.mode === 'desktop', showDark: s.alive && s.mode === 'dark', showMobile: s.alive && mob,
+      modes: [['desktop', 'Desktop'], ['mobile', 'Mobile'], ['dark', 'Desktop dark']].map(([k, label]) => ({ label, onClick: () => this.go(k), bg: s.mode === k ? '#F7F7F7' : 'transparent', fg: s.mode === k ? '#101010' : '#A8A8A8' })),
+      reset: () => this.go(s.mode),
+      help: mob ? 'Drag to pan · tap an available table · tap Review to open the form · Book reservation' : 'Drag to pan · scroll or +/− to zoom · pick time, guests and area · click an available table · Book reservation'
+    };
+  }
+}
+</script>
+</body>
+</html>

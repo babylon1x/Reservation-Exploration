@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<script src="./osa-data.js"></script>
+<style>body{margin:0}a{color:#E82E00}a:hover{color:#DA621E}</style>
+</helmet>
+<div style="position:relative;width:390px;height:844px;overflow:hidden;border-radius:44px;background:#EFEFEF;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','SF Pro',system-ui,sans-serif;color:#101010;-webkit-font-smoothing:antialiased">
+  <div style="position:absolute;inset:0;touch-action:none;cursor:grab" onPointerDown="{{ onDown }}" onPointerMove="{{ onMove }}" onPointerUp="{{ onUp }}" onPointerLeave="{{ onUp }}">
+    <div style="position:absolute;left:0;top:0;transform-origin:0 0;transform:translate({{ tx }}px,{{ ty }}px) scale({{ z }});transition:{{ mapTransition }}">
+      <dc-import name="OsaFloorPlan" guests="{{ guests }}" area="{{ area }}" time="{{ time }}" selected="{{ selected }}" focus="{{ confirmed }}" flag="{{ flag }}" on-pick="{{ pick }}" hint-size="1480px,1000px"></dc-import>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:0;right:0;top:0;height:50px;display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 34px;font-size:15px;font-weight:600;pointer-events:none">
+    <span>7:12</span>
+    <span style="display:flex;align-items:flex-end;gap:2px"><span style="width:3px;height:5px;border-radius:1px;background:#101010"></span><span style="width:3px;height:7px;border-radius:1px;background:#101010"></span><span style="width:3px;height:9px;border-radius:1px;background:#101010"></span><span style="width:3px;height:11px;border-radius:1px;background:#101010"></span><span style="margin-left:6px;width:22px;height:11px;border-radius:3px;box-sizing:border-box;border:1.5px solid #101010;padding:1px"><span style="display:block;width:70%;height:100%;border-radius:1px;background:#101010"></span></span></span>
+  </div>
+
+  <div style="position:absolute;left:16px;right:16px;top:54px;display:flex;gap:8px" onPointerDown="{{ stop }}">
+    <button style="flex:none;width:48px;height:48px;border-radius:50%;border:none;background:#FFFFFF;box-shadow:0 6px 20px rgba(16,16,16,0.10);display:flex;align-items:center;justify-content:center;color:#101010;cursor:pointer;padding:0" aria-label="Back">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"></path></svg>
+    </button>
+    <button onClick="{{ expand }}" style="flex:1;min-width:0;height:48px;border-radius:24px;border:none;background:#FFFFFF;box-shadow:0 6px 20px rgba(16,16,16,0.10);display:flex;align-items:center;gap:10px;padding:0 18px;font-family:inherit;color:#101010;cursor:pointer;text-align:left">
+      <span style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','SF Pro',system-ui,sans-serif;font-weight:600;letter-spacing:-0.02em;font-size:18px;white-space:nowrap">The River Café</span>
+      <span style="width:1px;height:18px;background:#E2E2E2"></span>
+      <span style="font-size:13px;color:#5E5E5E;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ topSummary }}</span>
+    </button>
+  </div>
+
+  <div style="position:absolute;left:16px;top:114px;display:flex;align-items:center;gap:12px;padding:7px 12px;background:#FFFFFF;border:1px solid #E2E2E2;border-radius:999px;font-size:12px;color:#5E5E5E;white-space:nowrap">
+    <div style="display:flex;align-items:center;gap:6px"><span style="width:11px;height:11px;border-radius:3px;box-sizing:border-box;background:#FEEDE0;border:1.5px solid #EB7C36"></span>Available</div>
+    <div style="display:flex;align-items:center;gap:6px"><span style="width:11px;height:11px;border-radius:3px;background:#E82E00"></span>Your pick</div>
+    <div style="display:flex;align-items:center;gap:6px"><span style="width:11px;height:11px;border-radius:3px;box-sizing:border-box;background:#E2E2E2;border:1.5px solid #CFCFCF"></span>Booked</div>
+    <div style="display:flex;align-items:center;gap:6px"><span style="width:11px;height:11px;border-radius:3px;box-sizing:border-box;border:1.5px dashed #808080"></span>Wrong size</div>
+  </div>
+
+  <sc-if value="{{ isPeek }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;right:16px;bottom:238px;display:flex;flex-direction:column;background:#FFFFFF;border:1px solid #E2E2E2;border-radius:16px;overflow:hidden" onPointerDown="{{ stop }}">
+      <button onClick="{{ zoomIn }}" style="width:46px;height:46px;border:none;background:transparent;font-size:20px;color:#101010;font-family:inherit;cursor:pointer">+</button>
+      <div style="height:1px;background:#E2E2E2"></div>
+      <button onClick="{{ zoomOut }}" style="width:46px;height:46px;border:none;background:transparent;font-size:20px;color:#101010;font-family:inherit;cursor:pointer">−</button>
+      <div style="height:1px;background:#E2E2E2"></div>
+      <button onClick="{{ fit }}" style="width:46px;height:46px;border:none;background:transparent;font-size:12px;font-weight:600;color:#101010;font-family:inherit;cursor:pointer">Fit</button>
+    </div>
+    <div style="position:absolute;left:0;right:0;bottom:0;background:#FFFFFF;border-radius:26px 26px 0 0;box-shadow:0 -10px 36px rgba(16,16,16,0.12);padding:10px 20px 34px;display:flex;flex-direction:column;gap:16px" onPointerDown="{{ stop }}">
+      <div onClick="{{ expand }}" style="align-self:center;width:38px;height:5px;border-radius:3px;background:#E2E2E2;cursor:pointer"></div>
+      <sc-if value="{{ hasSel }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;gap:14px;align-items:center">
+          <div style="flex:none;width:68px;height:68px;border-radius:14px;overflow:hidden;background:#F7F7F7"><div style="width:100%;height:68px;background:repeating-linear-gradient(135deg,#F7F7F7 0 10px,#EFEFEF 10px 20px);display:flex;align-items:center;justify-content:center;padding:0 16px;box-sizing:border-box;text-align:center"></div></div>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
+            <div style="display:flex;align-items:center;gap:8px"><span style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','SF Pro',system-ui,sans-serif;font-variant-numeric:tabular-nums;font-size:12px;font-weight:500;color:#FFF;background:#E82E00;border-radius:6px;padding:3px 7px">{{ card.code }}</span><span style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','SF Pro',system-ui,sans-serif;font-weight:600;letter-spacing:-0.02em;font-size:20px;white-space:nowrap">{{ card.name }}</span></div>
+            <div style="font-size:13px;color:#5E5E5E">{{ card.meta }}</div>
+          </div>
+        </div>
+        <button onClick="{{ expand }}" style="height:52px;border-radius:14px;border:none;background:#E82E00;color:#FFF;font-family:inherit;font-size:16px;font-weight:600;cursor:pointer">Review</button>
+      </sc-if>
+      <sc-if value="{{ noSel }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:6px;padding-bottom:8px">
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','SF Pro',system-ui,sans-serif;font-weight:600;letter-spacing:-0.02em;font-size:20px">Tap an available table</div>
+          <div style="font-size:14px;line-height:1.45;color:#5E5E5E">{{ line }}</div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isExpanded }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ collapse }}" style="position:absolute;inset:0;background:rgba(16,16,16,0.32)"></div>
+    <div style="position:absolute;left:0;right:0;top:62px;bottom:0;background:#FFFFFF;border-radius:26px 26px 0 0;box-shadow:0 -10px 36px rgba(16,16,16,0.14);display:flex;flex-direction:column;overflow:hidden" onPointerDown="{{ stop }}">
+      <div style="padding:10px 20px 0;display:flex;flex-direction:column;gap:10px">
+        <div onClick="{{ collapse }}" style="align-self:center;width:38px;height:5px;border-radius:3px;background:#E2E2E2;cursor:pointer"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','SF Pro',system-ui,sans-serif;font-weight:600;letter-spacing:-0.02em;font-size:26px">Your reservation</div>
+          <button onClick="{{ collapse }}" style="width:40px;height:40px;border-radius:50%;border:1px solid #E2E2E2;background:#FFFFFF;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;color:#101010" aria-label="Show map"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 5l4 4 4-4"></path></svg></button>
+        </div>
+      </div>
+      <div style="flex:1;overflow:auto;padding:12px 20px 20px;display:flex;flex-direction:column;gap:20px">
+        <sc-if value="{{ hasSel }}" hint-placeholder-val="{{ true }}">
+          <div style="border:1px solid #E2E2E2;border-radius:18px;overflow:hidden;display:flex;flex-direction:column;flex:none">
+            <div style="height:150px;background:#F7F7F7"><div style="width:100%;height:150px;background:repeating-linear-gradient(135deg,#F7F7F7 0 10px,#EFEFEF 10px 20px);display:flex;align-items:center;justify-content:center;padding:0 16px;box-sizing:border-box;text-align:center"><span style="font-size:12px;line-height:1.4;color:#808080">{{ card.hint }}</span></div></div>
+            <div style="padding:14px 16px 16px;display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+                <div style="display:flex;flex-direction:column;gap:2px"><span style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','SF Pro',system-ui,sans-serif;font-weight:600;letter-spacing:-0.02em;font-size:21px">{{ card.name }}</span><span style="font-size:13px;color:#5E5E5E">{{ card.seats }} · {{ card.tagLine }}</span></div>
+                <span style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','SF Pro',system-ui,sans-serif;font-variant-numeric:tabular-nums;font-size:13px;font-weight:500;color:#E82E00;background:#FFF3EF;border-radius:6px;padding:4px 8px">{{ card.code }}</span>
+              </div>
+              <div style="font-size:14px;line-height:1.5;color:#5E5E5E;text-wrap:pretty">{{ card.desc }}</div>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;padding-top:10px;border-top:1px solid #E2E2E2"><span style="font-size:14px;font-weight:500">{{ card.feeLabel }}</span><span style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','SF Pro',system-ui,sans-serif;font-weight:600;letter-spacing:-0.02em;font-size:20px">{{ card.fee }}</span></div>
+            </div>
+          </div>
+        </sc-if>
+        <div style="position:relative;display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#5E5E5E">Date</div>
+          <button onClick="{{ toggleDate }}" style="cursor:pointer;height:48px;border-radius:12px;border:1px solid #E2E2E2;background:#FFFFFF;display:flex;align-items:center;gap:10px;padding:0 14px;font-family:inherit;font-size:15px;color:#101010">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#5E5E5E" stroke-width="1.4"><rect x="2" y="3" width="12" height="11" rx="2"></rect><path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3"></path></svg>
+            <span style="flex:1;text-align:left">{{ dateLong }}</span>
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#808080" stroke-width="1.5" stroke-linecap="round"><path d="M3 4.5l3 3 3-3"></path></svg>
+          </button>
+          <sc-if value="{{ dateOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;left:0;right:0;top:82px;z-index:5;background:#FFFFFF;border:1px solid #E2E2E2;border-radius:16px;box-shadow:0 14px 40px rgba(16,16,16,0.14);padding:14px;display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <button onClick="{{ cal.prev }}" aria-label="Previous month" style="width:34px;height:34px;border-radius:50%;border:none;background:transparent;color:{{ cal.prevFg }};cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 3L4.5 7l4 4"></path></svg></button>
+                <div style="font-size:15px;font-weight:600;color:#101010">{{ cal.title }}</div>
+                <button onClick="{{ cal.next }}" aria-label="Next month" style="width:34px;height:34px;border-radius:50%;border:none;background:transparent;color:{{ cal.nextFg }};cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 3l4 4-4 4"></path></svg></button>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));font-size:11px;font-weight:600;color:#808080;text-align:center"><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span></div>
+              <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px">
+                <sc-for list="{{ cal.days }}" as="d" hint-placeholder-count="0">
+                  <button onClick="{{ d.onClick }}" style="height:36px;border:none;border-radius:10px;background:{{ d.bg }};color:{{ d.fg }};font-family:inherit;font-size:14px;font-weight:{{ d.fw }};cursor:{{ d.cursor }};visibility:{{ d.vis }};padding:0">{{ d.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#5E5E5E">Time</div>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+            <sc-for list="{{ times }}" as="tm" hint-placeholder-count="6">
+              <button onClick="{{ tm.onClick }}" style="height:44px;border-radius:12px;border:1px solid {{ tm.bd }};background:{{ tm.bg }};color:{{ tm.fg }};font-family:inherit;font-size:14px;font-weight:500;cursor:pointer">{{ tm.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#5E5E5E">Guests</div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <button onClick="{{ dec }}" style="width:44px;height:44px;border-radius:50%;border:1px solid #E2E2E2;background:#FFFFFF;font-size:18px;color:#101010;font-family:inherit;cursor:pointer" aria-label="Fewer guests">−</button>
+            <div style="width:34px;text-align:center;font-size:20px;font-weight:600">{{ guests }}</div>
+            <button onClick="{{ inc }}" style="width:44px;height:44px;border-radius:50%;border:1px solid #E2E2E2;background:#FFFFFF;font-size:18px;color:#101010;font-family:inherit;cursor:pointer" aria-label="More guests">+</button>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#5E5E5E">Seating area</div>
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+            <sc-for list="{{ areas }}" as="a" hint-placeholder-count="2">
+              <button onClick="{{ a.onClick }}" style="text-align:left;border-radius:14px;border:1.5px solid {{ a.bd }};background:{{ a.bg }};padding:14px;display:flex;flex-direction:column;gap:10px;cursor:pointer;font-family:inherit;color:#101010">
+                <span style="width:18px;height:18px;border-radius:50%;box-sizing:border-box;border:1.5px solid {{ a.bd }};display:flex;align-items:center;justify-content:center"><span style="width:8px;height:8px;border-radius:50%;background:{{ a.dot }}"></span></span>
+                <span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:600">{{ a.title }}</span><span style="font-size:13px;color:#5E5E5E">{{ a.sub }}</span></span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;line-height:1.45"><span style="flex:none;width:8px;height:8px;margin-top:6px;border-radius:50%;background:#EB7C36"></span><span>{{ line }}</span></div>
+      </div>
+      <div style="flex:none;padding:14px 20px 32px;border-top:1px solid #E2E2E2;display:flex;flex-direction:column;gap:8px;background:#FFFFFF">
+        <button onClick="{{ book }}" style="height:54px;border-radius:14px;border:none;background:{{ btnBg }};color:{{ btnFg }};font-family:inherit;font-size:16px;font-weight:600;cursor:pointer">Book reservation</button>
+        <div style="font-size:12px;color:#5E5E5E;text-align:center">{{ btnNote }}</div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ confirmed }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:0;right:0;bottom:0;background:#FFFFFF;border-radius:26px 26px 0 0;box-shadow:0 -10px 36px rgba(16,16,16,0.12);padding:10px 20px 32px;display:flex;flex-direction:column;gap:18px" onPointerDown="{{ stop }}">
+      <div style="align-self:center;width:38px;height:5px;border-radius:3px;background:#E2E2E2"></div>
+      <div style="display:flex;align-items:center;gap:14px">
+        <div style="flex:none;width:44px;height:44px;border-radius:50%;background:#E82E00;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#FFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 10.5l3.5 3.5 7.5-8"></path></svg></div>
+        <div style="display:flex;flex-direction:column;gap:2px"><div style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','SF Pro',system-ui,sans-serif;font-weight:600;letter-spacing:-0.02em;font-size:26px;line-height:1.1">Your table is booked</div><div style="font-size:13px;color:#5E5E5E">Confirmation sent to emma.carter@gmail.com</div></div>
+      </div>
+      <div style="border-radius:14px;background:#F7F7F7;padding:14px 16px;display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#5E5E5E">Reference</span><span style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','SF Pro',system-ui,sans-serif;font-variant-numeric:tabular-nums;font-size:19px;font-weight:500;letter-spacing:.04em">{{ refNo }}</span></div>
+        <span style="font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','SF Pro',system-ui,sans-serif;font-variant-numeric:tabular-nums;font-size:13px;font-weight:500;color:#FFF;background:#E82E00;border-radius:6px;padding:4px 8px">{{ card.code }}</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:11px;font-size:14px">
+        <div style="display:flex;justify-content:space-between"><span style="color:#5E5E5E">Table</span><span style="font-weight:500">{{ card.name }} · {{ card.seats }}</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#5E5E5E">When</span><span style="font-weight:500">{{ dateMini }} · {{ time }}</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#5E5E5E">Guests</span><span style="font-weight:500">{{ guestsText }}</span></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:#5E5E5E">Deposit paid</span><span style="font-weight:500">{{ card.fee }}</span></div>
+      </div>
+      <div style="font-size:13px;line-height:1.5;color:#5E5E5E">We hold your table for 15 minutes past your booking time. The deposit comes off your final bill.</div>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+        <button onClick="{{ change }}" style="height:52px;border-radius:14px;border:1.5px solid #E82E00;background:#FFFFFF;color:#E82E00;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer">Change booking</button>
+        <button style="height:52px;border-radius:14px;border:1px solid #E2E2E2;background:#FFFFFF;color:#101010;font-family:inherit;font-size:15px;font-weight:500;cursor:pointer">Add to calendar</button>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844},&quot;scenario&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;peek&quot;,&quot;expanded&quot;,&quot;confirmed&quot;],&quot;default&quot;:&quot;peek&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  static VIEWS = { indoor: { z: 0.9, tx: -291, ty: -92 }, outdoor: { z: 0.9, tx: -800, ty: -92 }, confirmed: { z: 1.15, tx: 195 - 540 * 1.15, ty: 250 - 625 * 1.15 } };
+  state = this.init(this.props.scenario || 'peek');
+  init(sc) {
+    const s = Object.assign({ dY: 2026, dM: 9, dD: 16, calY: 2026, calM: 9, dateOpen: false, time: '7:30 pm', guests: 2, area: 'indoor', selected: 'W3', sheet: 'peek', confirmed: false, anim: false }, Component.VIEWS.indoor);
+    if (sc === 'expanded') s.sheet = 'expanded';
+    if (sc === 'fresh') s.selected = null;
+    if (sc === 'confirmed') Object.assign(s, { confirmed: true, sheet: 'none' }, Component.VIEWS.confirmed);
+    return s;
+  }
+  componentDidMount() {
+    if (!window.OSA_DATA) this._iv = setInterval(() => { if (window.OSA_DATA) { clearInterval(this._iv); this.forceUpdate(); } }, 50);
+  }
+  componentDidUpdate(pp) { if (pp.scenario !== this.props.scenario) this.setState(this.init(this.props.scenario || 'peek')); }
+  componentWillUnmount() { clearInterval(this._iv); }
+  zoomAt(f, mx = 195, my = 380) {
+    this.setState(s => { const z = Math.min(2, Math.max(0.3, s.z * f)); return { z, tx: mx - (mx - s.tx) * z / s.z, ty: my - (my - s.ty) * z / s.z, anim: true }; });
+  }
+  dateVals() {
+    const C = {"fg":"#101010","off":"#CFCFCF","sel":"#E82E00"};
+    const s = this.state, MN = ['January','February','March','April','May','June','July','August','September','October','November','December'], DN = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const dt = new Date(s.dY, s.dM, s.dD), today = new Date(2026, 9, 10), max = new Date(2026, 11, 31);
+    const lead = (new Date(s.calY, s.calM, 1).getDay() + 6) % 7, n = new Date(s.calY, s.calM + 1, 0).getDate(), noop = () => {};
+    const days = [];
+    for (let i = 0; i < lead; i++) days.push({ label: '', vis: 'hidden', onClick: noop, bg: 'transparent', fg: C.fg, fw: 400, cursor: 'default' });
+    for (let d = 1; d <= n; d++) {
+      const x = new Date(s.calY, s.calM, d), off = x < today || x > max, on = x.getTime() === dt.getTime(), isT = x.getTime() === today.getTime();
+      days.push({ label: String(d), vis: 'visible', onClick: off ? noop : () => this.setState({ dY: s.calY, dM: s.calM, dD: d, dateOpen: false }), bg: on ? C.sel : 'transparent', fg: on ? '#FFF' : off ? C.off : C.fg, fw: on || isT ? 600 : 400, cursor: off ? 'default' : 'pointer' });
+    }
+    const idx = s.calY * 12 + s.calM, canPrev = idx > 2026 * 12 + 9, canNext = idx < 2026 * 12 + 11;
+    const shift = k => this.setState(st => { const m = st.calM + k; return { calY: st.calY + Math.floor(m / 12), calM: (m + 12) % 12 }; });
+    const pad = v => String(v).padStart(2, '0'), ds = DN[dt.getDay()].slice(0, 3), ms = MN[s.dM].slice(0, 3);
+    return {
+      dateOpen: s.dateOpen, toggleDate: () => this.setState(st => ({ dateOpen: !st.dateOpen, calY: st.dY, calM: st.dM })),
+      dateLong: DN[dt.getDay()] + ', ' + s.dD + ' ' + MN[s.dM] + ' ' + s.dY, dateShort: ds + ', ' + s.dD + ' ' + ms + ' ' + s.dY, dateMini: ds + ', ' + s.dD + ' ' + ms,
+      refNo: 'RC-' + pad(s.dM + 1) + pad(s.dD) + '-' + (s.selected || 'W3') + 'K7',
+      cal: { title: MN[s.calM] + ' ' + s.calY, days, prev: () => canPrev && shift(-1), next: () => canNext && shift(1), prevFg: canPrev ? C.fg : C.off, nextFg: canNext ? C.fg : C.off }
+    };
+  }
+  renderVals() { return Object.assign(this.baseVals(), this.dateVals()); }
+  baseVals() {
+    const D = window.OSA_DATA, s = this.state;
+    if (!D) return { times: [], areas: [], tx: 0, ty: 0, z: 1, card: {} };
+    const sel = s.selected ? D.byCode(s.selected) : null;
+    const lost = !!(sel && D.isBooked(sel.code, s.time));
+    const sum = D.summary(s);
+    const guestsText = s.guests + (s.guests === 1 ? ' guest' : ' guests');
+    const canBook = !!sel && !lost;
+    const card = sel ? {
+      code: sel.code, name: sel.name, seats: D.seats(sel), desc: sel.desc, photo: sel.photo, hint: 'Photo · ' + sel.hint,
+      tagLine: sel.tags.slice(0, 2).join(' · '),
+      meta: D.seats(sel) + ' · ' + sel.tags[sel.tags.length > 1 ? 1 : 0] + ' · ' + (sel.fee ? D.fmt(sel.fee) + ' fee' : 'No fee'),
+      feeLabel: sel.fee ? 'Table fee, off your final bill' : 'No table fee', fee: sel.fee ? D.fmt(sel.fee) : '$0'
+    } : {};
+    return {
+      tx: s.tx, ty: s.ty, z: s.z, mapTransition: s.anim ? 'transform .45s cubic-bezier(.2,.7,.2,1)' : 'none',
+      guests: s.guests, area: s.area, time: s.time, selected: s.selected, confirmed: s.confirmed, guestsText,
+      flag: s.confirmed ? 'Booked · ' + s.time : '',
+      isPeek: !s.confirmed && s.sheet === 'peek', isExpanded: !s.confirmed && s.sheet === 'expanded',
+      hasSel: !!sel, noSel: !sel, card, line: sum.line,
+      topSummary: this.dateVals().dateMini + ' · ' + s.time + ' · ' + guestsText,
+      pick: (code) => { if (!this.state.confirmed) this.setState({ selected: code, sheet: 'peek' }); },
+      stop: (e) => e.stopPropagation(),
+      onDown: (e) => { const r = e.currentTarget.getBoundingClientRect(); this.drag = { x: e.clientX, y: e.clientY, tx: s.tx, ty: s.ty, k: r.width / 390 }; },
+      onMove: (e) => { const d = this.drag; if (!d) return; this.setState({ tx: d.tx + (e.clientX - d.x) / d.k, ty: d.ty + (e.clientY - d.y) / d.k, anim: false }); },
+      onUp: () => { this.drag = null; },
+      zoomIn: () => this.zoomAt(1.2), zoomOut: () => this.zoomAt(1 / 1.2),
+      fit: () => { const z = 0.26; this.setState({ z, tx: 195 - 700 * z, ty: 360 - 500 * z, anim: true }); },
+      expand: () => { if (!this.state.confirmed) this.setState({ sheet: 'expanded' }); },
+      collapse: () => this.setState({ sheet: 'peek' }),
+      times: D.times.map(t => { const on = t === s.time; return { label: t, onClick: () => this.setState({ time: t }), bg: on ? '#E82E00' : '#FFFFFF', fg: on ? '#FFF' : '#101010', bd: on ? '#E82E00' : '#E2E2E2' }; }),
+      dec: () => this.setState(st => ({ guests: Math.max(1, st.guests - 1) })),
+      inc: () => this.setState(st => ({ guests: Math.min(10, st.guests + 1) })),
+      areas: [['indoor', 'Indoor', 'Dining room'], ['outdoor', 'Outdoor', 'River terrace']].map(([k, title, sub]) => {
+        const on = s.area === k;
+        return { title, sub, bd: on ? '#E82E00' : '#E2E2E2', bg: on ? '#FFF3EF' : '#FFFFFF', dot: on ? '#E82E00' : 'transparent',
+          onClick: () => this.setState(Object.assign({ area: k, anim: true, selected: sel && sel.area !== k ? null : s.selected }, Component.VIEWS[k])) };
+      }),
+      book: () => { if (canBook) this.setState(Object.assign({ confirmed: true, sheet: 'none', anim: true }, Component.VIEWS.confirmed)); },
+      change: () => this.setState(Object.assign({ confirmed: false, sheet: 'expanded', anim: true }, Component.VIEWS.indoor)),
+      btnBg: canBook ? '#E82E00' : '#E2E2E2', btnFg: canBook ? '#FFF' : '#808080',
+      btnNote: lost ? sel.code + ' is booked at ' + s.time + '. Pick another table.' : !sel ? 'Pick a table on the map to continue.' : sel.fee ? D.fmt(sel.fee) + ' deposit today, taken off your final bill.' : 'No deposit needed for this table.'
+    };
+  }
+}
+</script>
+</body>
+</html>
