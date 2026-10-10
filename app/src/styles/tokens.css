@@ -1,0 +1,219 @@
+/* ───────────────────────────────────────────────────────────────────────────
+   Design tokens
+
+   Two layers:
+   1. Primitive scales: the raw palette (primary, secondary, neutral). Never
+      used directly by components.
+   2. Semantic tokens: what a colour is FOR. Components only use these, so
+      dark mode is just a different mapping of layer 2 onto layer 1.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* Primary: key #E82E00 = primary-600 */
+  --primary-50: #FFF3EF;
+  --primary-100: #FFE3DA;
+  --primary-200: #FFC4B2;
+  --primary-300: #FF9A7D;
+  --primary-400: #FF6A42;
+  --primary-500: #F8471A;
+  --primary-600: #E82E00;
+  --primary-700: #BF2600;
+  --primary-800: #9A2102;
+  --primary-900: #7C1F06;
+  --primary-950: #430C00;
+
+  /* Secondary: key #F2995E = secondary-400 */
+  --secondary-50: #FFF7F1;
+  --secondary-100: #FEEDE0;
+  --secondary-200: #FCD8BF;
+  --secondary-300: #F8BC92;
+  --secondary-400: #F2995E;
+  --secondary-500: #EB7C36;
+  --secondary-600: #DA621E;
+  --secondary-700: #B54C17;
+  --secondary-800: #913E19;
+  --secondary-900: #763518;
+  --secondary-950: #401A0A;
+
+  /* Neutral: key #101010 = neutral-950 */
+  --neutral-0: #FFFFFF;
+  --neutral-50: #F7F7F7;
+  --neutral-100: #EFEFEF;
+  --neutral-200: #E2E2E2;
+  --neutral-300: #CFCFCF;
+  --neutral-400: #A8A8A8;
+  --neutral-500: #808080;
+  --neutral-600: #5E5E5E;
+  --neutral-700: #454545;
+  --neutral-800: #2B2B2B;
+  --neutral-900: #1C1C1C;
+  --neutral-950: #101010;
+
+  /* Type */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'SF Pro', system-ui, sans-serif;
+
+  /* Radii */
+  --radius-panel: 22px;
+  --radius-sheet: 26px;
+  --radius-card: 14px;
+  --radius-control: 12px;
+  --radius-chip: 6px;
+}
+
+/* ── Light (default) ─────────────────────────────────────────────────────── */
+:root {
+  color-scheme: light;
+
+  --bg-canvas: var(--neutral-100);
+  --bg-surface: var(--neutral-0);
+  --bg-subtle: var(--neutral-50);
+  --border-default: var(--neutral-200);
+  --border-strong: var(--neutral-300);
+
+  --text-primary: var(--neutral-950);
+  --text-secondary: var(--neutral-600);
+  --text-tertiary: var(--neutral-500);
+  --text-disabled: var(--neutral-300);
+  --text-on-action: var(--neutral-0);
+
+  --action-primary: var(--primary-600);
+  --action-primary-hover: var(--primary-700);
+  --action-selected-subtle: var(--primary-50);
+  --action-disabled-bg: var(--neutral-200);
+  --action-disabled-fg: var(--neutral-500);
+
+  --accent-detail: var(--secondary-600);
+  --accent-dot: var(--secondary-500);
+  --code-chip-bg: var(--secondary-100);
+  --code-chip-fg: var(--secondary-800);
+
+  --tooltip-bg: var(--neutral-950);
+  --tooltip-fg: var(--neutral-50);
+  --photo-stripe-a: var(--neutral-50);
+  --photo-stripe-b: var(--neutral-100);
+
+  --shadow-panel: 0 14px 40px rgba(16, 16, 16, 0.10), 0 2px 6px rgba(16, 16, 16, 0.05);
+  --shadow-popover: 0 14px 40px rgba(16, 16, 16, 0.14);
+  --shadow-float: 0 6px 20px rgba(16, 16, 16, 0.10);
+  --shadow-sheet: 0 -10px 36px rgba(16, 16, 16, 0.12);
+  --scrim: rgba(16, 16, 16, 0.32);
+
+  /* Tables on the map */
+  --table-available-fill: var(--secondary-100);
+  --table-available-border: var(--secondary-500);
+  --table-available-chair: var(--secondary-300);
+  --table-available-ink: var(--secondary-800);
+
+  --table-hovered-fill: var(--secondary-200);
+  --table-hovered-border: var(--secondary-700);
+  --table-hovered-chair: var(--secondary-400);
+  --table-hovered-ink: var(--secondary-900);
+  --table-hovered-shadow: 0 4px 14px rgba(232, 46, 0, 0.18);
+
+  --table-selected: var(--primary-600);
+  --table-selected-chair: var(--primary-400);
+  --table-selected-ring: rgba(232, 46, 0, 0.16);
+  --table-lost-ring: rgba(232, 46, 0, 0.10);
+
+  --table-booked-fill: var(--neutral-200);
+  --table-booked-border: var(--neutral-300);
+  --table-booked-ink: var(--neutral-400);
+
+  --table-wrong-border: var(--neutral-500);
+  --table-wrong-chair: var(--neutral-300);
+
+  /* Floor plan */
+  --plan-wall: var(--neutral-800);
+  --plan-floor: var(--neutral-50);
+  --plan-water: var(--neutral-300);
+  --plan-quay: var(--neutral-200);
+  --plan-fixture: var(--neutral-200);
+  --plan-soft-line: var(--neutral-300);
+  --plan-label: var(--neutral-600);
+  --plan-label-muted: var(--neutral-500);
+  --plan-decking: var(--secondary-50);
+  --plan-decking-line: var(--secondary-100);
+  --plan-plant-leaf: var(--neutral-300);
+  --plan-plant-pot: var(--neutral-400);
+  --plan-detail: var(--secondary-600);
+  --plan-detail-soft: var(--secondary-100);
+  --plan-glow: rgba(242, 153, 94, 0.10);
+}
+
+/* ── Dark ─────────────────────────────────────────────────────────────────
+   App.jsx sets data-theme on <html> from the device setting (or ?theme=dark),
+   and these values take over. Same mapping as the OsaDesktopDark design. */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg-canvas: var(--neutral-950);
+  --bg-surface: var(--neutral-900);
+  --bg-subtle: var(--neutral-800);
+  --border-default: var(--neutral-800);
+  --border-strong: var(--neutral-700);
+
+  --text-primary: var(--neutral-50);
+  --text-secondary: var(--neutral-400);
+  --text-tertiary: var(--neutral-500);
+  --text-disabled: var(--neutral-700);
+
+  --action-primary: var(--primary-500);
+  --action-primary-hover: var(--primary-400);
+  --action-selected-subtle: var(--primary-950);
+  --action-disabled-bg: var(--neutral-800);
+  --action-disabled-fg: var(--neutral-500);
+
+  --accent-detail: var(--secondary-400);
+  --accent-dot: var(--secondary-400);
+  --code-chip-bg: var(--secondary-950);
+  --code-chip-fg: var(--secondary-200);
+
+  --tooltip-bg: var(--neutral-50);
+  --tooltip-fg: var(--neutral-800);
+  --photo-stripe-a: var(--neutral-800);
+  --photo-stripe-b: #242424;
+
+  --shadow-panel: 0 14px 40px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.3);
+  --shadow-popover: 0 14px 40px rgba(0, 0, 0, 0.5);
+  --shadow-float: 0 6px 20px rgba(0, 0, 0, 0.4);
+  --shadow-sheet: 0 -10px 36px rgba(0, 0, 0, 0.5);
+  --scrim: rgba(0, 0, 0, 0.5);
+
+  --table-available-fill: var(--secondary-950);
+  --table-available-border: var(--secondary-400);
+  --table-available-chair: var(--secondary-800);
+  --table-available-ink: var(--secondary-200);
+
+  --table-hovered-fill: var(--secondary-900);
+  --table-hovered-border: var(--secondary-300);
+  --table-hovered-chair: var(--secondary-600);
+  --table-hovered-ink: var(--secondary-50);
+  --table-hovered-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+
+  --table-selected: var(--primary-500);
+  --table-selected-chair: var(--primary-300);
+  --table-selected-ring: rgba(248, 71, 26, 0.3);
+  --table-lost-ring: rgba(248, 71, 26, 0.2);
+
+  --table-booked-fill: var(--neutral-800);
+  --table-booked-border: var(--neutral-700);
+  --table-booked-ink: var(--neutral-600);
+
+  --table-wrong-border: var(--neutral-500);
+  --table-wrong-chair: var(--neutral-700);
+
+  --plan-wall: var(--neutral-400);
+  --plan-floor: var(--neutral-800);
+  --plan-water: var(--neutral-700);
+  --plan-quay: var(--neutral-800);
+  --plan-fixture: var(--neutral-800);
+  --plan-soft-line: var(--neutral-700);
+  --plan-label: var(--neutral-400);
+  --plan-label-muted: var(--neutral-500);
+  --plan-decking: var(--neutral-900);
+  --plan-decking-line: var(--secondary-950);
+  --plan-plant-leaf: var(--neutral-700);
+  --plan-plant-pot: var(--neutral-600);
+  --plan-detail: var(--secondary-400);
+  --plan-detail-soft: var(--secondary-950);
+}

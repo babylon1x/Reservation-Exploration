@@ -1,0 +1,346 @@
+/* ── Viewport ───────────────────────────────────────────────────────────── */
+
+.map-viewport {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--bg-canvas);
+  cursor: grab;
+  touch-action: none; /* we handle pan and pinch ourselves */
+  user-select: none;
+}
+
+.map-viewport.is-dragging {
+  cursor: grabbing;
+}
+
+.map-viewport__layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+}
+
+.map-viewport__layer.is-animating {
+  transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.floor-plan {
+  position: relative;
+}
+
+/* ── Scenery ────────────────────────────────────────────────────────────────
+   One class per `look` used in the restaurant data files. */
+
+.scenery {
+  position: absolute;
+  box-sizing: border-box;
+}
+
+.scenery--walled {
+  border-style: solid;
+  border-color: var(--plan-wall);
+}
+
+.scenery__text {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--plan-label-muted);
+  white-space: nowrap;
+}
+
+.scenery--quay { background: var(--plan-quay); }
+.scenery--water { background: var(--plan-water); }
+.scenery--ripple { background: var(--plan-quay); border-radius: 2px; }
+
+.scenery--floor { background: var(--plan-floor); }
+.scenery--opening { background: var(--plan-floor); }
+
+.scenery--door-swing-left,
+.scenery--door-swing-right {
+  border: 0 dashed var(--plan-label-muted);
+}
+.scenery--door-swing-left { border-right-width: 1px; border-bottom-width: 1px; border-radius: 0 0 40px 0; }
+.scenery--door-swing-right { border-left-width: 1px; border-bottom-width: 1px; border-radius: 0 0 0 40px; }
+
+.scenery--glass-wall {
+  background: repeating-linear-gradient(90deg, var(--plan-water) 0 110px, var(--plan-wall) 110px 114px);
+}
+.scenery--glass-door { background: var(--plan-water); }
+
+.scenery--decking {
+  background: repeating-linear-gradient(0deg, var(--plan-decking) 0 15px, var(--plan-decking-line) 15px 16px);
+  border-color: var(--plan-detail);
+}
+.scenery--planter { background: var(--plan-water); border-radius: 8px; }
+
+.scenery--plant {
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--plan-plant-pot) 0 34%, var(--plan-plant-leaf) 35%);
+}
+
+.scenery--firepit {
+  border-radius: 50%;
+  border: 3px solid var(--plan-detail);
+  background: radial-gradient(circle, var(--plan-detail) 0 28%, var(--plan-decking) 30%);
+}
+
+.scenery--umbrella {
+  border-radius: 50%;
+  border: 1.5px dashed var(--plan-detail);
+  background: var(--plan-glow);
+}
+
+.scenery--kitchen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: repeating-linear-gradient(45deg, var(--plan-fixture) 0 6px, var(--plan-floor) 6px 12px);
+}
+.scenery--kitchen .scenery__text {
+  font-size: 12px;
+  background: var(--plan-floor);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.scenery--cellar {
+  border-color: var(--plan-soft-line);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 22px;
+}
+
+/* `lines: n` in the data: shelves, racks and the like */
+.scenery__line {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--plan-fixture);
+}
+
+.scenery--bar-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--plan-fixture);
+}
+.scenery--bar-back .scenery__text { font-size: 10px; letter-spacing: 0.2em; }
+
+.scenery--bar-counter {
+  border-radius: 6px;
+  background: var(--plan-detail-soft);
+  border-bottom: 3px solid var(--plan-detail);
+}
+
+.scenery--host-stand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: var(--plan-fixture);
+}
+.scenery--host-stand .scenery__text { font-size: 9px; letter-spacing: 0.14em; }
+
+.scenery--room-label .scenery__text { color: var(--plan-label-muted); }
+
+.scenery--area-label .scenery__text,
+.scenery--water-label .scenery__text {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  text-transform: none;
+  color: var(--plan-label);
+}
+.scenery--water-label .scenery__text { font-size: 28px; letter-spacing: 0.01em; }
+
+.scenery--street-label .scenery__text {
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+}
+
+.scenery--entrance {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.scenery--entrance .scenery__text { color: var(--plan-detail); }
+.scenery--entrance::after { /* the little arrow pointing in */
+  content: '';
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid var(--plan-detail);
+}
+
+/* ── Tables ─────────────────────────────────────────────────────────────────
+   Each state sets four local variables; the parts below use them. */
+
+.table {
+  position: absolute;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: default;
+  transition: opacity 0.25s;
+
+  --chair: var(--table-available-chair);
+  --chair-border: none;
+  --fill: var(--table-available-fill);
+  --border: 1.5px solid var(--table-available-border);
+  --ink: var(--table-available-ink);
+  --shadow: none;
+}
+
+.table:focus-visible { outline: none; }
+.table:focus-visible .table__top { outline: 2px solid var(--text-primary); outline-offset: 4px; }
+
+.table[aria-disabled='false'] { cursor: pointer; }
+
+.table__chair {
+  position: absolute;
+  box-sizing: border-box;
+  background: var(--chair);
+  border: var(--chair-border);
+  transition: background 0.2s;
+}
+
+.table__top {
+  position: absolute;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--fill);
+  border: var(--border);
+  box-shadow: var(--shadow);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.table__top--stool { font-size: 10px; }
+
+.table--hovered {
+  --chair: var(--table-hovered-chair);
+  --fill: var(--table-hovered-fill);
+  --border: 2px solid var(--table-hovered-border);
+  --ink: var(--table-hovered-ink);
+  --shadow: var(--table-hovered-shadow);
+}
+
+.table--selected {
+  --chair: var(--table-selected-chair);
+  --fill: var(--table-selected);
+  --border: 2px solid var(--table-selected);
+  --ink: var(--text-on-action);
+  --shadow: 0 0 0 7px var(--table-selected-ring);
+}
+
+.table--lost {
+  --chair: var(--table-booked-border);
+  --fill: var(--table-booked-fill);
+  --border: 2px dashed var(--table-selected);
+  --ink: var(--table-selected);
+  --shadow: 0 0 0 7px var(--table-lost-ring);
+}
+
+.table--booked {
+  --chair: var(--table-booked-border);
+  --fill: var(--table-booked-fill);
+  --border: 1.5px solid var(--table-booked-border);
+  --ink: var(--table-booked-ink);
+}
+
+.table--wrong-size {
+  --chair: transparent;
+  --chair-border: 1.5px dashed var(--table-wrong-chair);
+  --fill: transparent;
+  --border: 1.5px dashed var(--table-wrong-border);
+  --ink: var(--table-wrong-border);
+  opacity: 0.6;
+}
+
+.table--other-area { opacity: 0.22; }
+.table--dimmed { opacity: 0.38; }
+
+/* ── Tooltip ────────────────────────────────────────────────────────────── */
+
+.map-tooltip {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: none;
+  background: var(--tooltip-bg);
+  color: var(--tooltip-fg);
+}
+.map-tooltip--accent { background: var(--action-primary); color: var(--text-on-action); }
+.map-tooltip__code { font-variant-numeric: tabular-nums; }
+.map-tooltip__dot { opacity: 0.55; }
+
+/* ── Legend ─────────────────────────────────────────────────────────────── */
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 10px 18px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.legend__item { display: flex; align-items: center; gap: 8px; }
+.legend__swatch { width: 14px; height: 14px; border-radius: 4px; box-sizing: border-box; }
+.legend__swatch--available { background: var(--table-available-fill); border: 1.5px solid var(--table-available-border); }
+.legend__swatch--selected { background: var(--table-selected); }
+.legend__swatch--booked { background: var(--table-booked-fill); border: 1.5px solid var(--table-booked-border); }
+.legend__swatch--wrong-size { border: 1.5px dashed var(--table-wrong-border); }
+
+.legend--compact { gap: 12px; padding: 7px 12px; font-size: 12px; }
+.legend--compact .legend__item { gap: 6px; }
+.legend--compact .legend__swatch { width: 11px; height: 11px; border-radius: 3px; }
+
+/* ── Zoom ───────────────────────────────────────────────────────────────── */
+
+.zoom {
+  display: flex;
+  align-items: center;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.zoom__btn {
+  width: 48px;
+  height: 42px;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 20px;
+  cursor: pointer;
+}
+.zoom__btn:hover { background: var(--bg-subtle); }
+.zoom__btn--fit { width: auto; padding: 0 18px; font-size: 14px; font-weight: 500; }
+.zoom__divider { width: 1px; height: 20px; background: var(--border-default); }
+
+.zoom--vertical { flex-direction: column; border-radius: 16px; }
+.zoom--vertical .zoom__btn { width: 46px; height: 46px; }
+.zoom--vertical .zoom__btn--fit { padding: 0; font-size: 12px; font-weight: 600; }
+.zoom--vertical .zoom__divider { width: 100%; height: 1px; }

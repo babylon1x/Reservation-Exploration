@@ -1,0 +1,41 @@
+/* Desktop: the map fills the window; everything else floats on top. */
+
+.desktop {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+.desktop__legend {
+  position: absolute;
+  left: 50%;
+  top: 24px;
+  transform: translateX(-50%);
+}
+
+.desktop__zoom {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+}
+
+.desktop__left {
+  position: absolute;
+  left: 24px;
+  top: 24px;
+  bottom: 24px;
+  width: 340px;
+  padding: 22px 26px 26px;
+  gap: 20px;
+}
+
+.desktop__right {
+  position: absolute;
+  right: 24px;
+  top: 24px;
+  max-height: calc(100% - 48px);
+  width: 340px;
+  padding: 24px;
+  gap: 18px;
+}
