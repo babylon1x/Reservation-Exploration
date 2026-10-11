@@ -200,18 +200,65 @@ dl, dd { margin: 0; }
 .calendar__day.is-selected { background: var(--action-primary); color: var(--text-on-action); font-weight: 600; }
 
 /* Time */
-.time-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-.time-grid__slot {
-  height: 40px;
-  border-radius: 10px;
-  border: 1px solid var(--border-default);
+.time-field { position: relative; }
+.time-popover {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 80px;
+  z-index: 5;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   background: var(--bg-surface);
-  font-size: 14px;
-  font-weight: 500;
+  border: 1px solid var(--border-default);
+  border-radius: 16px;
+  box-shadow: var(--shadow-popover);
+}
+.time-popover__wheels { display: flex; align-items: flex-end; justify-content: center; gap: 10px; }
+.time-popover__colon { height: 180px; display: flex; align-items: center; font-size: 18px; font-weight: 600; }
+
+/* A wheel shows five rows of 36px; the middle one is the chosen row. */
+.time-wheel { position: relative; display: flex; flex-direction: column; gap: 6px; width: 84px; }
+.time-wheel__label { font-size: 11px; font-weight: 600; color: var(--text-tertiary); text-align: center; }
+.time-wheel::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 72px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--bg-subtle);
+  pointer-events: none;
+}
+.time-wheel__list {
+  position: relative;
+  z-index: 1;
+  height: 180px;
+  padding: 72px 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-snap-type: y mandatory;
+  scrollbar-width: none;
+}
+.time-wheel__list::-webkit-scrollbar { display: none; }
+.time-wheel__item {
+  flex: none;
+  height: 36px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-tertiary);
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+  scroll-snap-align: center;
   cursor: pointer;
 }
-.time-grid__slot:hover:not(.is-selected) { border-color: var(--border-strong); }
-.time-grid__slot.is-selected { background: var(--action-primary); border-color: var(--action-primary); color: var(--text-on-action); }
+.time-wheel__item.is-selected { color: var(--text-primary); font-weight: 600; }
 
 /* Guests */
 .stepper { display: flex; align-items: center; justify-content: space-between; }
@@ -270,7 +317,7 @@ dl, dd { margin: 0; }
 /* Bigger touch targets in the mobile sheet */
 .booking-form--touch .date-field__button { height: 48px; }
 .booking-form--touch .calendar { top: 82px; }
-.booking-form--touch .time-grid__slot { height: 44px; border-radius: 12px; }
+.booking-form--touch .time-popover { top: 82px; }
 .booking-form--touch .stepper__btn { width: 44px; height: 44px; }
 
 /* ── Summary ────────────────────────────────────────────────────────────── */
@@ -424,3 +471,22 @@ dl, dd { margin: 0; }
   background: var(--bg-subtle);
 }
 .reference__value { font-size: 22px; font-weight: 500; letter-spacing: 0.04em; font-variant-numeric: tabular-nums; }
+
+/* ── Confetti ───────────────────────────────────────────────────────────── */
+
+.confetti { position: fixed; z-index: 100; width: 0; height: 0; pointer-events: none; }
+.confetti__piece {
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: var(--colour);
+  opacity: 0;
+  animation: confetti-pop 2.4s linear both;
+}
+/* Out fast from the centre, then a slow tumble down while fading. */
+@keyframes confetti-pop {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(0.3); animation-timing-function: cubic-bezier(0.1, 0.8, 0.25, 1); }
+  28% { opacity: 1; transform: translate(calc(var(--dx) + var(--lean) - 50%), calc(var(--dy) - 50%)) rotate(calc(var(--spin) * 0.35)); animation-timing-function: cubic-bezier(0.4, 0, 0.8, 0.6); }
+  75% { opacity: 1; }
+  100% { opacity: 0; transform: translate(calc(var(--dx) + var(--lean) + var(--drift) - 50%), calc(var(--dy) + var(--fall) - 50%)) rotate(var(--spin)); }
+}

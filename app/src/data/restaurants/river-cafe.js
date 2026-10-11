@@ -182,7 +182,8 @@ export default {
 
   // How far ahead guests can book, as an ISO date (YYYY-MM-DD).
   bookableUntil: '2026-12-31',
-  times: ['6:30 pm', '7:00 pm', '7:30 pm', '8:00 pm', '8:30 pm', '9:00 pm'],
+  // Guests can type any time inside these opening hours.
+  hours: { open: '8:00 am', close: '10:00 pm' },
   defaultTime: '7:30 pm',
   defaultGuests: 2,
 
@@ -201,7 +202,8 @@ export default {
   tables,
   scenery,
 
-  // Sample bookings: which tables are taken at each time. The same for every
+  // Sample bookings: which tables are taken from each time until the next one
+  // listed (nothing is taken before the first). The same for every
   // date for now — a real app would load this from the booking system.
   bookings: {
     '6:30 pm': ['W2', 'M1', 'C3', 'T2', 'T6'],

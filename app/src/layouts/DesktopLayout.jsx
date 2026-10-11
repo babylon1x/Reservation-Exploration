@@ -1,4 +1,6 @@
 // Desktop: full-screen map, booking panel on the left, live preview on the right.
+// "Book reservation" first opens a review pop-up (step 'review'); booking only
+// happens when the guest confirms there.
 
 import { useEffect, useRef, useState } from 'react';
 import MapViewport from '../components/map/MapViewport.jsx';
@@ -34,7 +36,7 @@ function Header({ restaurant }) {
   );
 }
 
-function Confirmation({ restaurant, reservation, info, actions }) {
+function Confirmation({ restaurant, reservation, info, onChange }) {
   return (
     <div className="panel-body">
       <div className="stack-12">
@@ -56,8 +58,45 @@ function Confirmation({ restaurant, reservation, info, actions }) {
       </p>
       <div className="spacer" />
       <div className="stack-10">
-        <button type="button" className="btn btn--outline" onClick={actions.changeBooking}>Change booking</button>
+        <button type="button" className="btn btn--outline" onClick={onChange}>Change booking</button>
         <button type="button" className="btn btn--ghost">Add to calendar</button>
+      </div>
+    </div>
+  );
+}
+
+// The last look before booking: the same overview as the right panel, with a
+// way back to the form and the button that actually books.
+function ReviewDialog({ restaurant, reservation, info, actions }) {
+  const dialog = useRef(null);
+
+  useEffect(() => {
+    dialog.current.focus();
+    const onKey = (e) => e.key === 'Escape' && actions.closeReview();
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [actions]);
+
+  return (
+    <div className="review">
+      <div className="review__scrim" onClick={actions.closeReview} />
+      <div className="panel review__dialog" role="dialog" aria-modal="true" aria-labelledby="review-title" tabIndex={-1} ref={dialog}>
+        <div className="stack-4">
+          <h2 className="heading heading--24" id="review-title">Review your reservation</h2>
+          <div className="text-tertiary text-13">Check the details before you book.</div>
+        </div>
+        <div className="review__body">
+          <SummaryRows restaurant={restaurant} reservation={reservation} table={info.table} lost={info.lost} />
+          <div className="divider" />
+          <TableCard restaurant={restaurant} table={info.table} photoHeight={120} />
+        </div>
+        <div className="stack-10">
+          <div className="review__actions">
+            <button type="button" className="btn btn--outline" onClick={actions.closeReview}>Edit reservation</button>
+            <button type="button" className="btn btn--primary" disabled={!info.canBook} onClick={actions.book}>Book reservation</button>
+          </div>
+          <p className="btn-note">{info.buttonNote}</p>
+        </div>
       </div>
     </div>
   );
@@ -68,6 +107,13 @@ export default function DesktopLayout({ restaurant, reservation, actions }) {
   const [hoveredId, setHoveredId] = useState(null);
   const info = describeReservation(restaurant, reservation);
   const confirmed = reservation.step === 'confirmed';
+  const reviewing = reservation.step === 'review' && info.canBook;
+
+  // "Change booking" goes back to the form, not straight into the review.
+  const editBooking = () => {
+    actions.changeBooking();
+    actions.closeReview();
+  };
 
   // Glide the map to the chosen seating area. Runs on first load (no
   // animation) and again whenever the area changes.
@@ -100,13 +146,13 @@ export default function DesktopLayout({ restaurant, reservation, actions }) {
         <Header restaurant={restaurant} />
         <div className="divider" />
         {confirmed ? (
-          <Confirmation restaurant={restaurant} reservation={reservation} info={info} actions={actions} />
+          <Confirmation restaurant={restaurant} reservation={reservation} info={info} onChange={editBooking} />
         ) : (
           <div className="panel-body">
             <BookingForm restaurant={restaurant} reservation={reservation} actions={actions} />
             <div className="spacer" />
             <div className="stack-10">
-              <button type="button" className="btn btn--primary" disabled={!info.canBook} onClick={actions.book}>
+              <button type="button" className="btn btn--primary" disabled={!info.canBook} onClick={actions.openReview}>
                 Book reservation
               </button>
               <p className="btn-note">{info.buttonNote}</p>
@@ -127,6 +173,8 @@ export default function DesktopLayout({ restaurant, reservation, actions }) {
         {info.lost && <LostNotice restaurant={restaurant} reservation={reservation} table={info.table} actions={actions} />}
         {info.table && !info.lost && <TableCard restaurant={restaurant} table={info.table} confirmed={confirmed} />}
       </aside>
+
+      {reviewing && <ReviewDialog restaurant={restaurant} reservation={reservation} info={info} actions={actions} />}
     </div>
   );
 }

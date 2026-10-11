@@ -2,22 +2,8 @@
 // Used in the desktop left panel and the expanded mobile sheet.
 
 import DateField from './DateField.jsx';
+import TimeField from './TimeField.jsx';
 import { availabilityLine } from '../../lib/reservation.js';
-
-function TimeGrid({ times, value, onChange }) {
-  return (
-    <div className="field">
-      <div className="field__label">Time</div>
-      <div className="time-grid">
-        {times.map((t) => (
-          <button key={t} type="button" className={`time-grid__slot${t === value ? ' is-selected' : ''}`} aria-pressed={t === value} onClick={() => onChange(t)}>
-            {t}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 function GuestStepper({ value, max, onChange }) {
   return (
@@ -64,7 +50,7 @@ export default function BookingForm({ restaurant, reservation, actions, touch = 
   return (
     <div className={`booking-form${touch ? ' booking-form--touch' : ''}`}>
       <DateField value={reservation.date} max={restaurant.bookableUntil} onChange={actions.setDate} />
-      <TimeGrid times={restaurant.times} value={reservation.time} onChange={actions.setTime} />
+      <TimeField value={reservation.time} hours={restaurant.hours} onChange={actions.setTime} />
       <GuestStepper value={reservation.guests} max={restaurant.maxGuests} onChange={actions.setGuests} />
       <AreaPicker areas={restaurant.areas} value={reservation.area} onChange={actions.setArea} />
       <AvailabilityLine restaurant={restaurant} reservation={reservation} />

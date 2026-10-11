@@ -1,12 +1,13 @@
 // The single shared state for a reservation.
 //
 //   date             'YYYY-MM-DD'
-//   time             one of restaurant.times, e.g. '7:30 pm'
+//   time             e.g. '7:30 pm', anywhere inside restaurant.hours
 //   guests           party size
 //   area             id of the chosen seating area
 //   selectedTableId  the guest's pick, or null
 //   step             'select'    picking (mobile: map with the peek sheet)
-//                    'review'    checking details (mobile: expanded sheet)
+//                    'review'    checking details before booking (desktop:
+//                                review pop-up, mobile: expanded sheet)
 //                    'confirmed' booked
 //
 // Plus one helper field: previousTime remembers the last time at which the

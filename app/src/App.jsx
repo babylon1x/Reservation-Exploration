@@ -35,9 +35,14 @@ function useTheme() {
 
 const restaurant = getRestaurant(params.get('restaurant'));
 
+// The desktop layout is drawn at two-thirds size (`zoom` in desktop.css), so
+// it fits windows two-thirds as wide as the 768px it was designed for.
+const DESKTOP_SCALE = 1 / 1.5;
+const MOBILE_QUERY = `(max-width: ${Math.ceil(768 * DESKTOP_SCALE) - 1}px)`;
+
 export default function App() {
   useTheme();
-  const isMobile = useMediaQuery('(max-width: 767px)');
+  const isMobile = useMediaQuery(MOBILE_QUERY);
   const [reservation, actions] = useReservation(restaurant);
 
   useEffect(() => {

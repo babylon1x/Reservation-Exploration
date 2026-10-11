@@ -3,9 +3,18 @@
 // rules drive the desktop panels, the mobile sheet and the map.
 
 import { monthDayCode } from './dates.js';
+import { toMinutes } from './times.js';
+
+// Bookings are listed per seating slot. A time in between, such as '7:45 pm',
+// falls inside the sitting that started at the slot before it, so it shares
+// that slot's bookings. Before the first slot nothing is booked.
+function bookingSlot(restaurant, time) {
+  const at = toMinutes(time);
+  return Object.keys(restaurant.bookings).findLast((t) => toMinutes(t) <= at);
+}
 
 export const isBooked = (restaurant, tableId, time) =>
-  (restaurant.bookings[time] ?? []).includes(tableId);
+  (restaurant.bookings[bookingSlot(restaurant, time)] ?? []).includes(tableId);
 
 export const fitsGroup = (table, guests) =>
   guests >= table.minGuests && guests <= table.maxGuests;

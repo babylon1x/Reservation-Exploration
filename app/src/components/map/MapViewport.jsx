@@ -75,14 +75,21 @@ const MapViewport = forwardRef(function MapViewport(
   // Measure before the parent's effects run, so centerOn() works on first load.
   useLayoutEffect(() => {
     const measure = () => {
-      const r = el.current.getBoundingClientRect();
-      size.current = { width: r.width, height: r.height };
+      size.current = { width: el.current.offsetWidth, height: el.current.offsetHeight };
     };
     measure();
     const ro = new ResizeObserver(measure);
     ro.observe(el.current);
     return () => ro.disconnect();
   }, []);
+
+  // Pointer position inside the viewport, in the viewport's own pixels. The
+  // layout may draw the UI at a CSS `zoom`, so screen pixels are divided by it.
+  const local = (e) => {
+    const r = el.current.getBoundingClientRect();
+    const scale = r.width / el.current.offsetWidth || 1;
+    return { x: (e.clientX - r.left) / scale, y: (e.clientY - r.top) / scale };
+  };
 
   // ── Wheel and trackpad zoom ──
   // Added by hand (not onWheel) because React's wheel listener can't stop the
@@ -91,9 +98,9 @@ const MapViewport = forwardRef(function MapViewport(
     const node = el.current;
     const onWheel = (e) => {
       e.preventDefault();
-      const r = node.getBoundingClientRect();
+      const p = local(e);
       const f = Math.exp(-e.deltaY * (e.ctrlKey ? 0.01 : 0.0015));
-      zoomAround(f, e.clientX - r.left, e.clientY - r.top, false);
+      zoomAround(f, p.x, p.y, false);
     };
     node.addEventListener('wheel', onWheel, { passive: false });
     return () => node.removeEventListener('wheel', onWheel);
@@ -104,11 +111,6 @@ const MapViewport = forwardRef(function MapViewport(
   const gesture = useRef(null);
   const [dragging, setDragging] = useState(false);
   const moved = useRef(false);
-
-  const local = (e) => {
-    const r = el.current.getBoundingClientRect();
-    return { x: e.clientX - r.left, y: e.clientY - r.top };
-  };
 
   const startGesture = () => {
     const pts = [...pointers.current.values()];

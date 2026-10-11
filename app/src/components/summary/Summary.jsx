@@ -2,7 +2,9 @@
 // the few buttons in here call actions passed down from the layout.
 
 import { alternativesFor, areaLabel, formatMoney, guestsLabel, seatsLabel } from '../../lib/reservation.js';
+import { useRef } from 'react';
 import { formatShort } from '../../lib/dates.js';
+import Confetti from './Confetti.jsx';
 
 // The view from a table. Striped placeholder with a caption until the data
 // file gives the table a real `photo` URL.
@@ -105,10 +107,10 @@ export function LostNotice({ restaurant, reservation, table, actions }) {
 }
 
 // Full table card: photo, name, code, seats, tags, description, fee.
-export function TableCard({ restaurant, table, confirmed }) {
+export function TableCard({ restaurant, table, confirmed, photoHeight = 172 }) {
   return (
     <div className="table-card">
-      <PhotoSlot table={table} height={172} badge={confirmed ? 'Booked for you' : null} />
+      <PhotoSlot table={table} height={photoHeight} badge={confirmed ? 'Booked for you' : null} />
       <div className="table-card__head">
         <div className="table-card__title-row">
           <div className="heading heading--22">{table.name}</div>
@@ -131,9 +133,12 @@ export function TableCard({ restaurant, table, confirmed }) {
   );
 }
 
+// The tick on the confirmation. Confetti pops out of it when it appears.
 export function SuccessMark() {
+  const mark = useRef(null);
   return (
-    <div className="success-mark" aria-hidden="true">
+    <div className="success-mark" aria-hidden="true" ref={mark}>
+      <Confetti anchor={mark} />
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4.5 10.5l3.5 3.5 7.5-8" /></svg>
     </div>
   );
