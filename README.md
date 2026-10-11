@@ -1,25 +1,79 @@
-# CODING AGENTS: READ THIS FIRST
+# The River Café: table reservation
 
-This is a **handoff bundle** from Claude Design (claude.ai/design).
+A table booking experience where guests choose their exact table from a live floor plan, instead of being handed whichever one is free. It is built as a design exploration for The River Café, a restaurant under the Brooklyn Bridge, and works on desktop and phone.
 
-A user mocked up designs in HTML/CSS/JS using an AI design tool, then exported this bundle so a coding agent can implement the designs for real.
+Most reservation tools ask for a date, a time and a party size, then assign a table behind the scenes. This one shows the room. Guests see which tables are free for their time, what each one is like, and what it costs, before they commit.
 
-## What you should do — IMPORTANT
+## What guests can do
 
-**Read the chat transcripts first.** There are 1 chat transcript(s) in `chats/`. The transcripts show the full back-and-forth between the user and the design assistant — they tell you **what the user actually wants** and **where they landed** after iterating. Don't skip them. The final HTML files are the output, but the chat is where the intent lives.
+### Pick a table on the floor plan
 
-**Read `project/River Cafe Prototype.dc.html` in full.** The user had this file open when they triggered the handoff, so it's almost certainly the primary design they want built. Read it top to bottom — don't skim. Then **follow its imports**: open every file it pulls in (shared components, CSS, scripts) so you understand how the pieces fit together before you start implementing.
+- The whole restaurant is drawn as an interactive map: the dining room, the bar, the private room and the river terrace.
+- The map pans by dragging and zooms with the scroll wheel, a pinch, or the on-screen buttons. "Fit" brings the whole plan back into view.
+- Every table shows its state at a glance: available, your pick, booked, or the wrong size for the group. A legend explains the colours.
+- Hovering a table shows its name and whether it is available.
 
-**If anything is ambiguous, ask the user to confirm before you start implementing.** It's much cheaper to clarify scope up front than to build the wrong thing.
+### Set the details
 
-## About the design files
+- **Date:** a calendar that only allows days inside the restaurant's booking window.
+- **Time:** hour and minute wheels limited to opening hours, 8:00 am to 10:00 pm.
+- **Guests:** a stepper from 1 to the restaurant's maximum party size.
+- **Seating area:** indoor dining room or outdoor river terrace. Switching glides the map to that area and fades the tables outside it.
 
-The design medium is **HTML/CSS/JS** — these are prototypes, not production code. Your job is to **recreate them pixel-perfectly** in whatever technology makes sense for the target codebase (React, Vue, native, whatever fits). Match the visual output; don't copy the prototype's internal structure unless it happens to fit.
+The map responds to every change. Raising the party size greys out tables that are too small, and changing the time updates which tables are booked.
 
-**Don't render these files in a browser or take screenshots unless the user asks you to.** Everything you need — dimensions, colors, layout rules — is spelled out in the source. Read the HTML and CSS directly; a screenshot won't tell you anything they don't.
+### See what a table offers before booking
 
-## Bundle contents
+Selecting a table opens its card, with:
 
-- `README.md` — this file
-- `chats/` — conversation transcripts (read these!)
-- `project/` — the `Osa House Table Reservation` project files (HTML prototypes, assets, components)
+- a photo slot for the view from that table
+- how many it seats
+- tags such as "Window", "Skyline view" or "Quiet"
+- a short description of where it sits in the room
+- the table fee, if there is one, taken as a deposit and deducted from the final bill
+
+A live summary of the reservation (date, time, guests, area, table) stays in view the whole time.
+
+### Recover when a table is taken
+
+If a guest changes the time and their chosen table is already booked then, the app says so plainly, offers to go back to the time that worked, and suggests up to three similar tables that are still free.
+
+### Review, then confirm
+
+"Book reservation" does not book straight away. It opens a review of the full reservation with two choices: edit it, or confirm. This keeps guests from booking by accident and then having to cancel.
+
+Confirming shows the booking reference, the deposit paid and the table highlighted on the map, with a small burst of confetti.
+
+## Desktop and phone
+
+- **Desktop:** the map fills the window, with the booking form floating on the left and the reservation summary on the right.
+- **Phone:** the map fills the screen with a bottom sheet. Tapping a table shows a short preview; swiping the sheet up opens the full details and the booking form.
+
+Both follow the device's light or dark theme.
+
+## Current scope
+
+This is a front-end exploration, not a live booking system:
+
+- Table availability comes from sample data and is the same for every date.
+- Booking does not take payment, send email, or save anything. Reloading the page starts over.
+- Table photos are placeholders until real images are added.
+- "Back" and "Add to calendar" are shown but not wired up.
+
+## Run it
+
+```bash
+cd app
+npm install
+npm run dev
+```
+
+Then open http://localhost:5173. Add `?theme=dark` or `?theme=light` to the address to force a theme.
+
+## What's in this repository
+
+| Folder | Contents |
+| --- | --- |
+| `app/` | The React app (Vite). See [app/README.md](app/README.md) for how the code is organised and how to add another restaurant. |
+| `project/` | The original HTML design prototypes the app was built from. |
+| `chats/` | The design conversation that produced those prototypes. |

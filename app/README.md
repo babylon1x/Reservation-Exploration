@@ -8,7 +8,7 @@ npm run dev        # http://localhost:5173
 ```
 
 URL options: `?theme=dark` / `?theme=light` (default follows the device),
-`?restaurant=river-cafe`. Narrower than 768px shows the mobile layout.
+`?restaurant=river-cafe`. Narrower than 512px shows the mobile layout.
 
 ## Where things live
 
